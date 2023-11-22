@@ -1,0 +1,5 @@
+/home/ntf229/nihao2/bin/storeBestAsFits.py:42: RuntimeWarning: invalid value encountered in log10
+  binGrid = np.logspace(np.log10(np.amin(ages)), np.log10(np.amax(ages)), num=numBins+1)
+/home/ntf229/nihao2/bin/storeBestAsFits.py:56: RuntimeWarning: invalid value encountered in log10
+  xbinGrid = np.logspace(np.log10(np.amin(ages)), np.log10(np.amax(ages)), num=numBins+1)
+done

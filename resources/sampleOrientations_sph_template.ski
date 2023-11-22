@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- A SKIRT parameter file © Astronomical Observatory, Ghent University -->
+<skirt-simulation-hierarchy type="MonteCarloSimulation" format="9" producer="Python toolkit for SKIRT (SkiFile class)" time="2022-02-28T11:21:20">
+  <MonteCarloSimulation userLevel="Regular" simulationMode="NoMedium" numPackets="1e7">
+    <random type="Random">
+      <Random seed="0"/>
+    </random>
+    <units type="Units">
+      <ExtragalacticUnits fluxOutputStyle="Frequency"/>
+    </units>
+    <cosmology type="Cosmology">
+      <LocalUniverseCosmology/>
+    </cosmology>
+    <sourceSystem type="SourceSystem">
+      <SourceSystem minWavelength="0.04 micron" maxWavelength="2000 micron" sourceBias="0.5">
+        <sources type="Source">
+          <ParticleSource filename="stars.txt" importVelocity="true" importVelocityDispersion="false" useColumns="" sourceWeight="1" wavelengthBias="0.5">
+            <smoothingKernel type="SmoothingKernel">
+              <CubicSplineSmoothingKernel/>
+            </smoothingKernel>
+            <sedFamily type="SEDFamily">
+              <FSPSSEDFamily imf="Chabrier"/>
+            </sedFamily>
+            <wavelengthBiasDistribution type="WavelengthDistribution">
+              <LogWavelengthDistribution minWavelength="0.04 micron" maxWavelength="2000 micron"/>
+            </wavelengthBiasDistribution>
+          </ParticleSource>
+        </sources>
+      </SourceSystem>
+    </sourceSystem>
+    <instrumentSystem type="InstrumentSystem">
+      <InstrumentSystem>
+        <defaultWavelengthGrid type="WavelengthGrid">
+          <LogWavelengthGrid minWavelength="0.04 micron" maxWavelength="2000 micron" numWavelengths="601"/>
+        </defaultWavelengthGrid>
+        <instruments type="Instrument">
+          <FullInstrument instrumentName="inc0_az0" distance="100 Mpc" inclination="0 deg" azimuth="0 deg" roll="0 deg" fieldOfViewX="210000 pc" numPixelsX="250" centerX="0 pc" fieldOfViewY="210000 pc" numPixelsY="250" centerY="0 pc" recordComponents="false" numScatteringLevels="0" recordPolarization="false" recordStatistics="false">
+          	<wavelengthGrid type="WavelengthGrid">
+            	<ConfigurableBandWavelengthGrid>
+            		<bands type="Band">
+            			<BroadBand bandName="SLOAN_SDSS_R"/>
+            		</bands>
+            	</ConfigurableBandWavelengthGrid>
+          	</wavelengthGrid>
+          </FullInstrument>
+        </instruments>
+      </InstrumentSystem>
+    </instrumentSystem>
+  </MonteCarloSimulation>
+</skirt-simulation-hierarchy>
