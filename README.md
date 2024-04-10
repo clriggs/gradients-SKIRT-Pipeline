@@ -3,7 +3,7 @@
 Template respository for generating SKIRT radiative transfer mock observations from the NIHAO simulations.   
 
 The methodology used here is described in  
-["Panchromatic Simulated Galaxy Observations from the NIHAO Project"](https://iopscience.iop.org/article/10.3847/1538-4357/acf9f0/pdf  "The Astrophysical Journal")  
+["Panchromatic Simulated Galaxy Observations from the NIHAO Project"](https://iopscience.iop.org/article/10.3847/1538-4357/acf9f0 "The Astrophysical Journal")  
 
 Analysis code for the resulting Fits files can be found at    
 [https://github.com/ntf229/NIHAO-SKIRT-Catalog](https://github.com/ntf229/NIHAO-SKIRT-Catalog "NIHAO-SKIRT-Catalog") in analysis.py  
