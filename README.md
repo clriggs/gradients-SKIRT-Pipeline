@@ -1,10 +1,12 @@
-# nihao2
+# NIHAO-SKIRT-Pipeline
 
-Template respository for generating SKIRT radiative transfer mock observations from the NIHAO simulations. 
+Template respository for generating SKIRT radiative transfer mock observations from the NIHAO simulations.   
 
-Analysis of the resulting Fits files can be found at https://github.com/ntf229/NIHAO-SKIRT-Catalog in analysis.py
+The methodology used here is described in  
+["Panchromatic Simulated Galaxy Observations from the NIHAO Project"](https://iopscience.iop.org/article/10.3847/1538-4357/acf9f0/pdf  "The Astrophysical Journal")  
 
-Methodology follows https://iopscience.iop.org/article/10.3847/1538-4357/acf9f0/pdf 
+Analysis code for the resulting Fits files can be found at    
+[https://github.com/ntf229/NIHAO-SKIRT-Catalog](https://github.com/ntf229/NIHAO-SKIRT-Catalog "NIHAO-SKIRT-Catalog") in analysis.py  
 
 Starting from simulation outputs, code in the bin directory should be run in the following order:
 1. makeParticles.py - create numpy arrays containing relevent simulation data
