@@ -9,22 +9,27 @@ import numpy as np
 import sys
 import xml.etree.ElementTree as ET
 from copy import deepcopy
+import pickle
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--num") # number of orientations 
-parser.add_argument("--z") # redshift
-parser.add_argument("--galaxy") # name of galaxy 
+parser.add_argument("--sim") # sim name (ex: cptmarvel, h148, r431, etc.)
+parser.add_argument("--sim_dict_path") # path to pickle file where sim info is stored
+parser.add_argument("--halo")
 args = parser.parse_args()
 
 num = int(args.num)-1 # first one is inc=0 az=0, already included in original ski file
 
+#load in .pickle file storing simulation information
+sim_dict=pickle.load(open(args.sim_dict_path, 'rb'))
+
 origDir = os.getcwd()
-codePath=expanduser('~')+'/nihao2/'
-resultPath = '/scratch/ntf229/nihao2/' # store results here
+codePath='/data/riggs/NIHAO-SKIRT-Pipeline-main/'
+resultPath = '/data/riggs/SKIRT/' # store results here
 
 # Directory structure stores important parameters
-particlePath = resultPath+'Particles/noAgeSmooth/noSF/'
-SKIRTPath = resultPath+'sampleOrientations_SKIRT/'
+particlePath = resultPath+sim_dict[args.sim]['class']+'/'+args.sim+'/'+str(args.halo)+'/Particles/noAgeSmooth/noSF/' #the particle path is where the particle info created by "makeParticles.py" is stored
+SKIRTPath = resultPath+sim_dict[args.sim]['class']+'/'+args.sim+'/'+str(args.halo)+'/sampleOrientations_SKIRT/' #where the results from this script will go
 
 particlePath += 'z'+args.z+'/'
 SKIRTPath += 'z'+args.z+'/'
@@ -35,7 +40,7 @@ start = timer()
 
 # sample orientations uniformly on the sphere 
 a = np.random.uniform(low=-1.0, high=1.0, size=num)
-inc = np.arccos(a) * 180 / np.pi 
+inc = np.arccos(a) * 180 / np.pi
 az = np.random.uniform(low=0.0, high=360.0, size=num)
 
 # round inc and az to 2 decimals
