@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 from astropy.visualization import make_lupton_rgb
 from matplotlib.patches import Ellipse
 import datetime
+import pickle
 
 def getData(galaxy, fileName):
 	inc = fileName.split('inc')[1].split('_az')[0]
