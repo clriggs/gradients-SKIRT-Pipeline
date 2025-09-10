@@ -1,4 +1,8 @@
-# NIHAO-SKIRT-Pipeline
+# gradients-SKIRT-Pipeline
+
+This is my fork of the NIHAO-SKIRT-Pipeline repository created by Nicholas Faucher (ntf229). 
+
+The original readme for the NIHAO-SKIRT-Pipeline is below:
 
 Template respository for generating SKIRT radiative transfer mock observations from the NIHAO simulations.   
 
