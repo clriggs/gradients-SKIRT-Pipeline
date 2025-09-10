@@ -2,6 +2,7 @@
 
 import pynbody
 import numpy as np
+import pickle
 import math
 from timeit import default_timer as timer
 from os.path import expanduser
@@ -11,16 +12,11 @@ from scipy import spatial
 from scipy.spatial.transform import Rotation as R
 
 class galaxy:
-    def __init__(self, z, name):
-        if z == '2.0':
-            filePath = '/scratch/ntf229/nihao2/n10/z'+z+'/'+name+'/'+name+'.00240'
-        elif z == '3.6':
-            filePath = '/scratch/ntf229/nihao2/n10/z'+z+'/'+name+'/'+name+'.00128'
-        else:
-            print('invalid redshift')
-            exit()
+    def __init__(self, sim, sim_dict_path, halo):
+        sim_dict = pickle.load(open(sim_dict_path, 'rb'))
+        filePath = sim_dict[sim]['path']
         
-        # Load NIHAO data
+        # Load simulation data
         self.data = pynbody.load(filePath)
         
         self.full_x_pos = np.float32(self.data.star['pos'].in_units('pc')[:][:,0])
@@ -55,8 +51,15 @@ class galaxy:
         print(self.full_length_dust, 'full dust') 
                 
         # Halo catalogue
-        h = self.data.halos() # ordered by number of particles (starts at 1)
-        haloNum = int(1)
+        ahf_path = sim_dict[sim]['ahf_path']
+
+        #if pynbody version is greater or equal to 2, then AHF numbering is off. This code chunk corrects that
+        if int(pynbody.__version__[:1]) >= 2: 
+            h = self.data.halos(ahf_basename=ahf_path, halo_numbers='v1') # ordered by number of particles (starts at 1)
+        else:
+            h = self.data.halos(ahf_basename=ahf_path)
+        
+        haloNum = int(halo) #halo is argument given when instantiating the class
         
         xMin = np.amin(h[haloNum]['x'].in_units('pc'))
         xMax = np.amax(h[haloNum]['x'].in_units('pc'))
@@ -310,11 +313,15 @@ if __name__=='__main__':
     parser.add_argument("--ageSmooth") # if True, smooth ages based on number of star particles (see galaxy.youngStars()) 
     parser.add_argument("--SF") # if True, star particles younger than 10 Myrs are assigned MAPPINGS-III SEDs
     parser.add_argument("--tauClear") # clearing time in Myrs for MAPPINGS-III f_PDR calculations (only matters if SF=True)
-    parser.add_argument("--z") # redshift
-    parser.add_argument("--galaxy") # name of galaxy 
+    parser.add_argument("--sim") # simulation
+    parser.add_argument("--sim_dict_path") # path to pickle file that stores simulation information
+    parser.add_argument("--halo")
     args = parser.parse_args()
+
+    #load in simulation information:
+    sim_dict = pickle.load(open(args.sim_dict_path, 'rb'))
     # Directory structure stores important parameters
-    particlePath = '/scratch/ntf229/nihao2/Particles/'
+    particlePath = '/data/riggs/SKIRT/'+sim_dict[args.sim]['class']+'/'+args.sim+'/'+str(args.halo)+'/Particles/' 
     if eval(args.ageSmooth):
         particlePath += 'ageSmooth/'
     else:
@@ -323,10 +330,8 @@ if __name__=='__main__':
         particlePath += 'SF/tauClear'+args.tauClear+'/'
     else:
         particlePath += 'noSF/'
-    particlePath += 'z'+args.z+'/'
-    particlePath += args.galaxy+'/'
     os.system('mkdir -p '+particlePath)
-    g = galaxy(args.z, args.galaxy)
+    g = galaxy(args.sim, args.sim_dict_path, args.halo)
     g.starCut()
     g.dustCut()
     g.shift()
