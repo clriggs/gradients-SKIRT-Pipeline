@@ -3,21 +3,22 @@
 import numpy as np
 import os
 import argparse
+import pickle
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--z") # redshift
-parser.add_argument("--galaxy") # name of galaxy
+parser.add_argument("--sim") # simulation
+parser.add_argument("--sim_dict_path")
+parser.add_argument("--halo") # halo number
 args = parser.parse_args()
 
-z = args.z
-galaxy = args.galaxy
+codePath = '/data/riggs/gradients-SKIRT-Pipeline-main/'
+resultPath = '/data/riggs/SKIRT/' # store results here
 
-codePath = '/home/ntf229/nihao2/'
-resultPath = '/scratch/ntf229/nihao2/' # store results here
-
+# load in .pickle file storing the simulation information
+sim_dict=pickle.load(open(args.sim_dict_path, 'rb'))
 # Directory structure stores important parameters
-sampledPath = resultPath+'sampledAxisRatios/z'+z+'/'+galaxy+'/'
-selectedPath = resultPath+'selectedOrientations/z'+z+'/'+galaxy+'/'
+sampledPath = resultPath+sim_dict[args.sim]['class']+'/'+args.sim+'/'+str(args.halo)+'/sampledAxisRatios/'
+selectedPath = resultPath+sim_dict[args.sim]['class']+'/'+args.sim+'/'+str(args.halo)+'/selectedOrientations/'
 
 sampledIncAzAR = np.load(sampledPath+'sampledIncAzAR.npy')
 
@@ -49,5 +50,3 @@ for j in range(len(axisRatioBins)):
                     azStr+'_ellipse.png '+selectedPath)
 # save selections as numpy array
 np.save(selectedPath+'selectedIncAzAR.npy', selectedIncAzAr)
-
-
