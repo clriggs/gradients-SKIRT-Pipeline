@@ -24,7 +24,7 @@ num = int(args.num)-1 # first one is inc=0 az=0, already included in original sk
 sim_dict=pickle.load(open(args.sim_dict_path, 'rb'))
 
 origDir = os.getcwd()
-codePath='/data/riggs/NIHAO-SKIRT-Pipeline-main/'
+codePath='/data/riggs/gradients-SKIRT-Pipeline-main/'
 resultPath = '/data/riggs/SKIRT/' # store results here
 
 # Directory structure stores important parameters
