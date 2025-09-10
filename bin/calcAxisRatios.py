@@ -38,21 +38,23 @@ def plotEllipse(galaxy, inc, az, r, center, phi, ba):
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--num") # number of orientations 
-parser.add_argument("--z") # redshift 
-parser.add_argument("--galaxy") # name of galaxy
+parser.add_argument("--sim") # sim name (ex: cptmarvel, h148, r431, etc.) 
+parser.add_argument("--sim_dict_path") # path to pickle file where simulation info is stored. EX: /resources/marvel_dcjl_sim_dict.pickle
+parser.add_argument("--halo") # halo number
 args = parser.parse_args()
 
 num = int(args.num)-1 # first one is inc=0 az=0, already included in original ski file
-z = args.z
-galaxy = args.galaxy
 
 origDir = os.getcwd()
-codePath=expanduser('~')+'/nihao2/'
-resultPath = '/scratch/ntf229/nihao2/' # store results here
+codePath='/data/riggs/gradients-SKIRT-Pipeline-main/' #path to the repository
+resultPath = '/data/riggs/SKIRT' # store results here
+
+#load in the pickle file, which is a directory of the simulation properties
+sim_dict=pickle.load(open(args.sim_dict_path, 'rb'))
 
 # Directory structure stores important parameters
-SKIRTPath = resultPath+'sampleOrientations_SKIRT/z'+z+'/'+galaxy+'/'
-savePath = resultPath+'sampledAxisRatios/z'+z+'/'+galaxy+'/'
+SKIRTPath = resultPath+sim_dict[args.sim]['class']+'/'+args.sim+'/'+str(args.halo)+'/sampleOrientations_SKIRT/'
+savePath = resultPath+sim_dict[args.sim]['class']+'/'+args.sim+'/'+str(args.halo)+'/sampledAxisRatios/'
 
 start = timer()
 
