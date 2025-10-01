@@ -47,7 +47,7 @@ args = parser.parse_args()
 num = int(args.num)-1 # first one is inc=0 az=0, already included in original ski file
 
 origDir = os.getcwd()
-codePath='/data/riggs/gradients-SKIRT-Pipeline-main/' #path to the repository
+codePath='/data/riggs/gradients-SKIRT-Pipeline/' #path to the repository
 resultPath = '/data/riggs/SKIRT' # store results here
 
 #load in the pickle file, which is a directory of the simulation properties

@@ -24,17 +24,13 @@ num = int(args.num)-1 # first one is inc=0 az=0, already included in original sk
 sim_dict=pickle.load(open(args.sim_dict_path, 'rb'))
 
 origDir = os.getcwd()
-codePath='/data/riggs/gradients-SKIRT-Pipeline-main/'
+codePath='/data/riggs/gradients-SKIRT-Pipeline/'
 resultPath = '/data/riggs/SKIRT/' # store results here
 
 # Directory structure stores important parameters
-particlePath = resultPath+sim_dict[args.sim]['class']+'/'+args.sim+'/'+str(args.halo)+'/Particles/noAgeSmooth/noSF/' #the particle path is where the particle info created by "makeParticles.py" is stored
+particlePath = resultPath+sim_dict[args.sim]['class']+'/'+args.sim+'/'+str(args.halo)+'/Particles/' #the particle path is where the particle info created by "makeParticles.py" is stored
 SKIRTPath = resultPath+sim_dict[args.sim]['class']+'/'+args.sim+'/'+str(args.halo)+'/sampleOrientations_SKIRT/' #where the results from this script will go
 
-particlePath += 'z'+args.z+'/'
-SKIRTPath += 'z'+args.z+'/'
-particlePath += args.galaxy+'/'
-SKIRTPath += args.galaxy+'/'
 
 start = timer()
 

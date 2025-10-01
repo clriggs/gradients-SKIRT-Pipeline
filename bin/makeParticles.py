@@ -45,7 +45,7 @@ class galaxy:
         print('min stellar particle mass:',np.amin(self.full_mass))
         
         self.full_length_star = len(self.full_x_pos) # starting length
-        print(self.full_length_star, 'full star') 
+        print(self.full_length_star, 'full star')
         
         self.full_length_dust = len(self.full_x_pos_dust) # starting length
         print(self.full_length_dust, 'full dust') 
@@ -310,7 +310,7 @@ class galaxy:
 if __name__=='__main__':
     start = timer()
     parser = argparse.ArgumentParser()
-    parser.add_argument("--ageSmooth") # if True, smooth ages based on number of star particles (see galaxy.youngStars()) 
+    # parser.add_argument("--ageSmooth") # if True, smooth ages based on number of star particles (see galaxy.youngStars()) 
     parser.add_argument("--SF") # if True, star particles younger than 10 Myrs are assigned MAPPINGS-III SEDs
     parser.add_argument("--tauClear") # clearing time in Myrs for MAPPINGS-III f_PDR calculations (only matters if SF=True)
     parser.add_argument("--sim") # simulation
@@ -322,10 +322,10 @@ if __name__=='__main__':
     sim_dict = pickle.load(open(args.sim_dict_path, 'rb'))
     # Directory structure stores important parameters
     particlePath = '/data/riggs/SKIRT/'+sim_dict[args.sim]['class']+'/'+args.sim+'/'+str(args.halo)+'/Particles/' 
-    if eval(args.ageSmooth):
-        particlePath += 'ageSmooth/'
-    else:
-        particlePath += 'noAgeSmooth/'
+    # if eval(args.ageSmooth):
+    #     particlePath += 'ageSmooth/'
+    # else:
+    #     particlePath += 'noAgeSmooth/'
     if eval(args.SF):
         particlePath += 'SF/tauClear'+args.tauClear+'/'
     else:
@@ -335,8 +335,8 @@ if __name__=='__main__':
     g.starCut()
     g.dustCut()
     g.shift()
-    if eval(args.ageSmooth):
-        g.ageSmooth()
+    # if eval(args.ageSmooth):
+    #     g.ageSmooth()
     if eval(args.SF):
         g.youngStars(args.tauClear)
         np.save(particlePath+'youngStars.npy',np.float32(np.c_[g.young_x_pos, g.young_y_pos, g.young_z_pos, g.young_smooth, g.young_x_vel, g.young_y_vel, g.young_z_vel, g.young_SFR, g.young_metals, g.young_logC, g.young_p, g.young_f_PDR]))

@@ -92,6 +92,16 @@
           <FullInstrument instrumentName="broadband" distance="100 Mpc" inclination="0 deg" azimuth="0 deg" roll="0 deg" fieldOfViewX="210000 pc" numPixelsX="250" centerX="0 pc" fieldOfViewY="210000 pc" numPixelsY="250" centerY="0 pc" recordComponents="false" numScatteringLevels="0" recordPolarization="false" recordStatistics="false">
           	<wavelengthGrid type="WavelengthGrid">
             	<PredefinedBandWavelengthGrid includeGALEX="true" includeSDSS="true" include2MASS="true" includeWISE="true" includeHERSCHEL="true"/>
+            </wavelengthGrid>
+            <wavelengthGrid type="WavelengthGrid">
+                <ConfigurableBandWavelengthGrid>
+                    <bands type="Band">
+                        <BroadBand bandName="SPITZER_IRAC_I1"/>
+                        <BroadBand bandName="SPITZER_IRAC_I2"/>
+                        <BroadBand bandName="SPITZER_IRAC_I3"/>
+                        <BroadBand bandName="SPITZER_IRAC_I4"/>
+                    </bands>
+                </ConfigurableBandWavelengthGrid>
           	</wavelengthGrid>
           </FullInstrument>
           <SEDInstrument instrumentName="SED" distance="100 Mpc" inclination="0 deg" azimuth="0 deg" roll="0 deg" recordComponents="false" numScatteringLevels="0" recordPolarization="false" recordStatistics="false"/>
@@ -99,12 +109,12 @@
       </InstrumentSystem>
     </instrumentSystem>
     <probeSystem type="ProbeSystem">
-      <ProbeSystem>
-      	<probes type="Probe">
-      		<SpatialGridConvergenceProbe probeName="spatial_convergence" wavelength="0.55 micron"/>
-      		<DefaultMediaDensityCutsProbe probeName="media_density_cuts"/>
-      	</probes>
-      </ProbeSystem>
-    </probeSystem>
+            <ProbeSystem>
+                <probes type="Probe">
+                    <ConvergenceInfoProbe probeName="spatial_convergence" wavelength="0.55 micron" probeAfter="Setup"/>
+                    <ConvergenceCutsProbe probeName="media_density_cuts" probeAfter="Setup"/>
+                </probes>
+            </ProbeSystem>
+        </probeSystem>
   </MonteCarloSimulation>
 </skirt-simulation-hierarchy>

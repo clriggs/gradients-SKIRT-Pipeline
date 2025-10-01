@@ -11,7 +11,7 @@ parser.add_argument("--sim_dict_path")
 parser.add_argument("--halo") # halo number
 args = parser.parse_args()
 
-codePath = '/data/riggs/gradients-SKIRT-Pipeline-main/'
+codePath = '/data/riggs/gradients-SKIRT-Pipeline/'
 resultPath = '/data/riggs/SKIRT/' # store results here
 
 # load in .pickle file storing the simulation information
