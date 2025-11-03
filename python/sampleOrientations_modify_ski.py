@@ -6,16 +6,20 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("--filePath") # path to .ski file
 parser.add_argument("--size") # length scale of region (used for field of views and spatial grid)
+parser.add_argument("--distance") #distance 
+
 args = parser.parse_args()
 
 tree = ET.parse(args.filePath)
 root = tree.getroot()
 
-FoV = float(args.size) * 2 / 3 # smaller field of view to account for rotations (factor 1/sqrt(2) smaller) 
+FoV = float(args.size) #* 2 / 3 # smaller field of view to account for rotations (factor 1/sqrt(2) smaller)
+
 
 d = {
     'FullInstrument/fieldOfViewX' : str(FoV)+'_pc',
     'FullInstrument/fieldOfViewY' :	str(FoV)+'_pc',
+    'FullInstrument/distance' : str(args.distance)+'_Mpc'
 }
 
 for name, value in d.items():
@@ -31,4 +35,3 @@ for name, value in d.items():
 				sub_item.set(s[-1], value.replace("_", " "))
 
 tree.write(args.filePath, encoding='UTF-8', xml_declaration=True)
-

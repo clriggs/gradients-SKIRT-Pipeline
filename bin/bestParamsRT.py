@@ -23,7 +23,7 @@ parser.add_argument("--tauClear") # clearing time in Myrs for MAPPINGS-III f_PDR
 parser.add_argument("--sim") # sim name (ex: cptmarvel, h148, r431, etc.) 
 parser.add_argument("--sim_dict_path") # path to pickle file where simulation info is stored. EX: /resources/marvel_dcjl_sim_dict.pickle
 parser.add_argument("--halo") # halo number
-parser.add_argument("--distance") #distance to system in Mpc
+parser.add_argument("--distance") #distance to system in Mpc 
 parser.add_argument("--numPhotons") # number of photon packages (SKIRT parameter)
 parser.add_argument("--pixels") # number of pixels (square) for image (SKIRT parameter)
 parser.add_argument("--dustFraction") # dust to metal ratio (SKIRT parameter)
@@ -32,12 +32,11 @@ parser.add_argument("--FoV") #field of view of instrument in pc (SKIRT parameter
 
 args = parser.parse_args()
 
-
 sim_dict=pickle.load(open(args.sim_dict_path, 'rb'))
+
 origDir = os.getcwd()
 codePath='/data/riggs/gradients-SKIRT-Pipeline/'
 resultPath = '/data/riggs/SKIRT/'+sim_dict[args.sim]['class']+'/'+args.sim+'/'+str(args.halo)+'/' # store results here
-
 selectedPath = resultPath+'selectedOrientations/'
 
 # Directory structure stores important parameters
@@ -87,6 +86,7 @@ selectedAz = selections[:,1]
 selectedAxisRatio = selections[:,2]
 
 instName = 'axisRatio'+str(np.round(selectedAxisRatio[0], decimals = 4))
+# instDist = sim_dict[args.sim]['dist'][args.halo]
 
 # including dust
 if os.path.isfile(SKIRTPath+'sph_SED_'+instName+'_sed.dat'):
@@ -108,7 +108,7 @@ else:
     # change ski file values including first instrument inc and az values
     os.system('python '+codePath+'python/modify_ski.py --filePath='+SKIRTPath+
             'sph.ski --inc='+str(selectedInc[0])+' --az='+str(selectedAz[0])+
-            ' --BBinstrument=broadband_'+instName+' --SEDinstrument=SED_'+instName+' --numPhotons='+args.numPhotons+' --pixels='+args.pixels+' --size='+str(maxLength)+' --dustFraction='+args.dustFraction+' --maxTemp='+args.maxTemp+' --distance='+args.distance+' --FoVX='+args.FoV+' --FoVY='+args.FoV)
+            ' --BBinstrument=broadband_'+instName+' --SEDinstrument=SED_'+instName+' --numPhotons='+args.numPhotons+' --pixels='+args.pixels+' --size='+str(maxLength)+' --dustFraction='+args.dustFraction+' --maxTemp='+args.maxTemp+' --distance='+args.distance+' --FoVX='+str(maxLength)+' --FoVY='+str(maxLength))
     # create new instruments with remaining inc and az values
     tree = ET.parse(SKIRTPath+'sph.ski')
     root = tree.getroot()
@@ -157,7 +157,7 @@ else:
     # change ski file values including first instrument inc and az values
     os.system('python '+codePath+'python/modify_ski.py --filePath='+noDustSKIRTPath+
             'sph.ski --inc='+str(selectedInc[0])+' --az='+str(selectedAz[0])+
-            ' --BBinstrument=broadband_'+instName+' --SEDinstrument=SED_'+instName+' --numPhotons='+args.numPhotons+' --pixels='+args.pixels+' --size='+str(maxLength)+' --dustFraction='+args.dustFraction+' --maxTemp='+args.maxTemp+' --distance='+args.distance+' --FoVX='+args.FoV+' --FoVY='+args.FoV)
+            ' --BBinstrument=broadband_'+instName+' --SEDinstrument=SED_'+instName+' --numPhotons='+args.numPhotons+' --pixels='+args.pixels+' --size='+str(args.FoV)+' --dustFraction='+args.dustFraction+' --maxTemp='+args.maxTemp+' --distance='+args.distance+' --FoVX='+str(args.FoV)+' --FoVY='+str(args.FoV))
     # create new instruments with remaining inc and az values
     tree = ET.parse(noDustSKIRTPath+'sph.ski')
     root = tree.getroot()

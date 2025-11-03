@@ -91,11 +91,28 @@
         <instruments type="Instrument">
           <FullInstrument instrumentName="broadband" distance="100 Mpc" inclination="0 deg" azimuth="0 deg" roll="0 deg" fieldOfViewX="210000 pc" numPixelsX="250" centerX="0 pc" fieldOfViewY="210000 pc" numPixelsY="250" centerY="0 pc" recordComponents="false" numScatteringLevels="0" recordPolarization="false" recordStatistics="false">
           	<wavelengthGrid type="WavelengthGrid">
-            	<PredefinedBandWavelengthGrid includeGALEX="true" includeSDSS="true" include2MASS="true" includeWISE="true" includeHERSCHEL="true"/>
-            </wavelengthGrid>
-            <wavelengthGrid type="WavelengthGrid">
                 <ConfigurableBandWavelengthGrid>
                     <bands type="Band">
+                        <BroadBand bandName="GALEX_GALEX_FUV"/>
+                        <BroadBand bandName="GALEX_GALEX_NUV"/>
+                        <BroadBand bandName="SLOAN_SDSS_U"/>
+                        <BroadBand bandName="SLOAN_SDSS_G"/>
+                        <BroadBand bandName="SLOAN_SDSS_R"/>
+                        <BroadBand bandName="SLOAN_SDSS_I"/>
+                        <BroadBand bandName="SLOAN_SDSS_Z"/>
+                        <BroadBand bandName="2MASS_2MASS_J"/>
+                        <BroadBand bandName="2MASS_2MASS_H"/>
+                        <BroadBand bandName="2MASS_2MASS_KS"/>
+                        <BroadBand bandName="WISE_WISE_W1"/>
+                        <BroadBand bandName="WISE_WISE_W2"/>
+                        <BroadBand bandName="WISE_WISE_W3"/>
+                        <BroadBand bandName="WISE_WISE_W4"/>
+                        <BroadBand bandName="HERSCHEL_PACS_70"/>
+                        <BroadBand bandName="HERSCHEL_PACS_100"/>
+                        <BroadBand bandName="HERSCHEL_PACS_160"/>
+                        <BroadBand bandName="HERSCHEL_SPIRE_250"/>
+                        <BroadBand bandName="HERSCHEL_SPIRE_350"/>
+                        <BroadBand bandName="HERSCHEL_SPIRE_500"/>
                         <BroadBand bandName="SPITZER_IRAC_I1"/>
                         <BroadBand bandName="SPITZER_IRAC_I2"/>
                         <BroadBand bandName="SPITZER_IRAC_I3"/>

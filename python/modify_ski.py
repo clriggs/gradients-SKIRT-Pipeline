@@ -30,7 +30,7 @@ root = tree.getroot()
 minXYZ = -float(args.size) / 2
 maxXYZ = float(args.size) / 2
 
-FoV = float(args.size) * 2 / 3 # smaller field of view to account for rotations (factor 1/sqrt(2) smaller) 
+FoV = float(args.size) #* 2 / 3 # smaller field of view to account for rotations (factor 1/sqrt(2) smaller) 
 
 d = {
 	'FullInstrument/inclination' : str(args.inc)+'_deg',

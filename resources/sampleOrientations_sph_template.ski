@@ -34,11 +34,11 @@
           <LogWavelengthGrid minWavelength="0.04 micron" maxWavelength="2000 micron" numWavelengths="601"/>
         </defaultWavelengthGrid>
         <instruments type="Instrument">
-          <FullInstrument instrumentName="inc0_az0" distance="100 Mpc" inclination="0 deg" azimuth="0 deg" roll="0 deg" fieldOfViewX="210000 pc" numPixelsX="250" centerX="0 pc" fieldOfViewY="210000 pc" numPixelsY="250" centerY="0 pc" recordComponents="false" numScatteringLevels="0" recordPolarization="false" recordStatistics="false">
+          <FullInstrument instrumentName="inc0_az0" distance="10 Mpc" inclination="0 deg" azimuth="0 deg" roll="0 deg" fieldOfViewX="15000 pc" numPixelsX="256" centerX="0 pc" fieldOfViewY="15000 pc" numPixelsY="256" centerY="0 pc" recordComponents="false" numScatteringLevels="0" recordPolarization="false" recordStatistics="false">
           	<wavelengthGrid type="WavelengthGrid">
             	<ConfigurableBandWavelengthGrid>
             		<bands type="Band">
-            			<BroadBand bandName="SLOAN_SDSS_R"/>
+            			<BroadBand bandName="SPITZER_IRAC_I1"/>
             		</bands>
             	</ConfigurableBandWavelengthGrid>
           	</wavelengthGrid>

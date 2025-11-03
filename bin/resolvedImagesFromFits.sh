@@ -25,6 +25,6 @@ for i in "${!mdcjl_dict[@]}"; do
     echo "on sim: $i"
     for j in "${!mdcjl_dict[$i]}"; do
         echo "on halo: $j"
-        python makeParticles.py --sim=$i --sim_dict_path=$mdcjl_path --halo=$j --SF=True --tauClear=3
+        python resolvedImagesFromFits.py --SF=True --tauClear=3 --numPhotons=1e8 --pixels=256 --dustFraction=0.1 --maxTemp=8000 --sim=$i --sim_dict_path=$mdcjl_path --halo=$j --instrument=spitzer
     done
 done

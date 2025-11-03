@@ -12,7 +12,7 @@ from matplotlib.patches import Ellipse
 import datetime
 import pickle
 
-def getData(galaxy, fileName):
+def getData(fileName):
 	inc = fileName.split('inc')[1].split('_az')[0]
 	az = fileName.split('az')[1].split('_total')[0]
 	images_file = fits.open(SKIRTPath+fileName)
@@ -20,7 +20,7 @@ def getData(galaxy, fileName):
 	r = images[0, :, :] # r band
 	return inc, az, r
 
-def plotEllipse(galaxy, inc, az, r, center, phi, ba):
+def plotEllipse(inc, az, r, center, phi, ba):
 	os.system('mkdir -p '+savePath)
 	fig = plt.figure()
 	sizes = np.shape(r)
@@ -42,13 +42,15 @@ parser.add_argument("--num") # number of orientations
 parser.add_argument("--sim") # sim name (ex: cptmarvel, h148, r431, etc.) 
 parser.add_argument("--sim_dict_path") # path to pickle file where simulation info is stored. EX: /resources/marvel_dcjl_sim_dict.pickle
 parser.add_argument("--halo") # halo number
+parser.add_argument("--SF") # either True or False; use whatever you used in makeParticles.py
+parser.add_argument("--tauClear") #only matters if SF=True; use the value you used in makeParticles.py
 args = parser.parse_args()
 
 num = int(args.num)-1 # first one is inc=0 az=0, already included in original ski file
 
 origDir = os.getcwd()
 codePath='/data/riggs/gradients-SKIRT-Pipeline/' #path to the repository
-resultPath = '/data/riggs/SKIRT' # store results here
+resultPath = '/data/riggs/SKIRT/' # store results here
 
 #load in the pickle file, which is a directory of the simulation properties
 sim_dict=pickle.load(open(args.sim_dict_path, 'rb'))
@@ -57,6 +59,13 @@ sim_dict=pickle.load(open(args.sim_dict_path, 'rb'))
 SKIRTPath = resultPath+sim_dict[args.sim]['class']+'/'+args.sim+'/'+str(args.halo)+'/sampleOrientations_SKIRT/'
 savePath = resultPath+sim_dict[args.sim]['class']+'/'+args.sim+'/'+str(args.halo)+'/sampledAxisRatios/'
 
+if eval(args.SF):
+    SKIRTPath += 'SF/tauClear'+args.tauClear+'/'
+    savePath += 'SF/tauClear'+args.tauClear+'/'
+else:
+    SKIRTPath += 'noSF/'
+    savePath += 'noSF/'
+    
 start = timer()
 
 numCenters = 50 # get average position of numCenters brightest pixels
@@ -69,7 +78,7 @@ minCut = 0.01
 
 incAzAR = np.zeros((numOrientations, 3)) # inc, az, axis ratio
 
-length = 250 # number of image pixels
+length = 256 # number of image pixels
 positions = np.linspace(0, length-1, num=length)
 xGrid = np.zeros((length, length), dtype=int)
 yGrid = np.zeros((length, length), dtype=int)
@@ -84,7 +93,7 @@ fileNames = fileNames[fitsMask] # only includes fits files
 inc = []
 az = []
 for i in range(numOrientations):
-	inc, az, r = getData(galaxy, fileNames[i])
+	inc, az, r = getData(fileNames[i])
 	temp_r = r.copy()
 	centers = np.zeros((numCenters, 2), dtype=int)
 	for j in range(numCenters):
@@ -113,11 +122,12 @@ for i in range(numOrientations):
 	phi = 0.5 * np.arctan2(u, q) * 180. / np.pi
 	yy = q**2 + u**2
 	ba = (1. + yy - 2. * np.sqrt(yy)) / (1 - yy)
-	plotEllipse(galaxy, inc, az, image_r, center, phi, ba)
+	plotEllipse(inc, az, image_r, center, phi, ba)
 	incAzAR[i, 0] = float(inc)
 	incAzAR[i, 1] = float(az)
 	incAzAR[i, 2] = float(ba)
 
+os.system('mkdir -p '+savePath)
 np.save(savePath+'sampledIncAzAR.npy', incAzAR)
 
 end = timer()

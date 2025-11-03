@@ -9,6 +9,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--sim") # simulation
 parser.add_argument("--sim_dict_path")
 parser.add_argument("--halo") # halo number
+parser.add_argument("--SF")
+parser.add_argument("--tauClear")
 args = parser.parse_args()
 
 codePath = '/data/riggs/gradients-SKIRT-Pipeline/'
@@ -19,6 +21,13 @@ sim_dict=pickle.load(open(args.sim_dict_path, 'rb'))
 # Directory structure stores important parameters
 sampledPath = resultPath+sim_dict[args.sim]['class']+'/'+args.sim+'/'+str(args.halo)+'/sampledAxisRatios/'
 selectedPath = resultPath+sim_dict[args.sim]['class']+'/'+args.sim+'/'+str(args.halo)+'/selectedOrientations/'
+
+if eval(args.SF):
+    sampledPath += 'SF/tauClear'+args.tauClear+'/'
+    selectedPath += 'SF/tauClear'+args.tauClear+'/'
+else:
+    sampledPath += 'noSF/'
+    selectedPath += 'noSF/'
 
 sampledIncAzAR = np.load(sampledPath+'sampledIncAzAR.npy')
 

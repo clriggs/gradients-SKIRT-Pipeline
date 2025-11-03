@@ -4,39 +4,40 @@ import argparse
 from astropy.io import fits
 from os.path import expanduser
 import fitsio
+import pickle
 
 def getStellarMass(galaxy):
-    if os.path.isfile(massPath+galaxy[1]+'/'+galaxy[0]+'/stellarMass.npy'):
-        SKIRT_stellarMass = float(np.load(massPath+galaxy[1]+'/'+galaxy[0]+'/stellarMass.npy'))
+    if os.path.isfile(massPath+'/stellarMass.npy'):
+        SKIRT_stellarMass = float(np.load(massPath+'/stellarMass.npy'))
     else:
-        #stars = np.load(particlePath+galaxy[1]+'/'+galaxy[0]+'/stars.npy')
-        #youngStars = np.load(particlePath+galaxy[1]+'/'+galaxy[0]+'/youngStars.npy')
+        #stars = np.load(particlePath+'/stars.npy')
+        #youngStars = np.load(particlePath+'/youngStars.npy')
         #SKIRT_stellarMass = np.sum(stars[:,7]) + (np.sum(youngStars[:,7] * 1.e7)) # in Msun
-        stars = np.load(particlePathNoSF+galaxy[1]+'/'+galaxy[0]+'/stars.npy')
+        stars = np.load(particlePathNoSF+'/stars.npy')
         SKIRT_stellarMass = np.sum(stars[:,7]) # in Msun
-        os.system('mkdir -p '+massPath+galaxy[1]+'/'+galaxy[0]+'/')
-        np.save(massPath+galaxy[1]+'/'+galaxy[0]+'/stellarMass.npy', SKIRT_stellarMass)
+        os.system('mkdir -p '+massPath+'/')
+        np.save(massPath+'/stellarMass.npy', SKIRT_stellarMass)
     return SKIRT_stellarMass
 
 def getSFR(galaxy):
-    if os.path.isfile(SFRPath+galaxy[1]+'/'+galaxy[0]+'/SFR.npy'):
-        SKIRT_SFR = float(np.load(SFRPath+galaxy[1]+'/'+galaxy[0]+'/SFR.npy'))
+    if os.path.isfile(SFRPath+'/SFR.npy'):
+        SKIRT_SFR = float(np.load(SFRPath+'/SFR.npy'))
     else:
-        #stars = np.load(particlePath+galaxy[1]+'/'+galaxy[0]+'/stars.npy')
-        #youngStars = np.load(particlePath+galaxy[1]+'/'+galaxy[0]+'/youngStars.npy')
+        #stars = np.load(particlePath+'/stars.npy')
+        #youngStars = np.load(particlePath+'/youngStars.npy')
         #youngMask = stars[:,9] < 1.e8 # younger than 100 Myrs
         #SKIRT_SFR = (np.sum(stars[youngMask,7]) / 1.e8) + np.sum(youngStars[:,7]) # in Msun per year
-        stars = np.load(particlePathNoSF+galaxy[1]+'/'+galaxy[0]+'/stars.npy')
+        stars = np.load(particlePathNoSF+'/stars.npy')
         youngMask = stars[:,9] < 1.e8 # younger than 100 Myrs
         SKIRT_SFR = (np.sum(stars[youngMask,7]) / 1.e8) # in Msun per year
-        os.system('mkdir -p '+SFRPath+galaxy[1]+'/'+galaxy[0]+'/')
-        np.save(SFRPath+galaxy[1]+'/'+galaxy[0]+'/SFR.npy', SKIRT_SFR)
+        os.system('mkdir -p '+SFRPath+'/')
+        np.save(SFRPath+'/SFR.npy', SKIRT_SFR)
     return SKIRT_SFR
 
 def getSFH(galaxy):
     # star formation history (1D histogram)
     # ages on log scale in years
-    stars = np.load(particlePathNoSF+galaxy[1]+'/'+galaxy[0]+'/stars.npy')
+    stars = np.load(particlePathNoSF+'/stars.npy')
     ages = stars[:,9] # in years 
     masses = stars[:,7] # in M_sun
     binGrid = np.logspace(np.log10(np.amin(ages)), np.log10(np.amax(ages)), num=numBins+1)
@@ -48,7 +49,7 @@ def getSFH(galaxy):
 def getCEH(galaxy):
     # chemical evolution history (2D histogram)
     # ages and metallicities on log scale
-    stars = np.load(particlePathNoSF+galaxy[1]+'/'+galaxy[0]+'/stars.npy')
+    stars = np.load(particlePathNoSF+'/stars.npy')
     ages = stars[:,9] # in years 
     masses = stars[:,7] # in M_sun
     metals = np.float64(stars[:,8])
@@ -66,15 +67,15 @@ def getCEH(galaxy):
     return CEH, metals
 
 def getDustMass(galaxy):
-    if os.path.isfile(massPath+galaxy[1]+'/'+galaxy[0]+'/maxTemp'+args.maxTemp+'/metalMass.npy'):
-        metalMass = float(np.load(massPath+galaxy[1]+'/'+galaxy[0]+'/maxTemp'+args.maxTemp+'/metalMass.npy'))
+    if os.path.isfile(massPath+'/metalMass.npy'):
+        metalMass = float(np.load(massPath+'/metalMass.npy'))
     else:
-        gas = np.load(particlePath+galaxy[1]+'/'+galaxy[0]+'/gas.npy')
-        tempMask = gas[:,6] < float(args.maxTemp)
+        gas = np.load(particlePath+'/gas.npy')
+        tempMask = gas[:,6] < float(16000.)
         ghostMask = np.asarray(gas[tempMask][:,4] > 0, dtype=bool) # mask out negative mass ghost particles
         metalMass = np.sum(gas[tempMask, 4][ghostMask] * gas[tempMask, 5][ghostMask]) # in Msun
-        os.system('mkdir -p '+massPath+galaxy[1]+'/'+galaxy[0]+'/maxTemp'+args.maxTemp+'/')
-        np.save(massPath+galaxy[1]+'/'+galaxy[0]+'/maxTemp'+args.maxTemp+'/metalMass.npy', metalMass)
+        os.system('mkdir -p '+massPath+'/')
+        np.save(massPath+'/metalMass.npy', metalMass)
     SKIRT_dustMass = metalMass * dustFraction
     return SKIRT_dustMass
 
@@ -111,44 +112,53 @@ def energyBalance():
     emit_mask = wave > 2e4
     attenuation = noDustSpec[att_mask] - spec[att_mask] # in Janskys
     emission = spec[emit_mask] - noDustSpec[emit_mask]
-    attEnergy = -1*np.trapz(attenuation, freq[att_mask]) # 10^(−23) erg * s^(−1) * cm^(−2)⋅
-    emitEnergy = -1*np.trapz(emission, freq[emit_mask]) # 10^(−23) erg * s^(−1) * cm^(−2)⋅
+    attEnergy = -1*np.trapezoid(attenuation, freq[att_mask]) # 10^(−23) erg * s^(−1) * cm^(−2)⋅
+    emitEnergy = -1*np.trapezoid(emission, freq[emit_mask]) # 10^(−23) erg * s^(−1) * cm^(−2)⋅
     return attEnergy, emitEnergy
 
 def getSize(galaxy):
     # calculate size of galaxy image from text files
-    stars = np.load(particlePath+galaxy[1]+'/'+galaxy[0]+'/stars.npy')
-    gas = np.load(particlePath+galaxy[1]+'/'+galaxy[0]+'/gas.npy')
+    stars = np.load(particlePath+'/stars.npy')
+    gas = np.load(particlePath+'/gas.npy')
     xLengthStars = (np.amax(stars[:,0]) - np.amin(stars[:,0]))
     yLengthStars = (np.amax(stars[:,1]) - np.amin(stars[:,1]))
     zLengthStars = (np.amax(stars[:,2]) - np.amin(stars[:,2]))
-    xLengthGas = (np.amax(gas[:,0]) - np.amin(gas[:,0]))
-    yLengthGas = (np.amax(gas[:,1]) - np.amin(gas[:,1]))
-    zLengthGas = (np.amax(gas[:,2]) - np.amin(gas[:,2]))
+    if len(gas) == 0:
+        xLengthGas = 0.
+        yLengthGas = 0.
+        zLengthGas = 0.
+    else:
+        xLengthGas = (np.amax(gas[:,0]) - np.amin(gas[:,0]))
+        yLengthGas = (np.amax(gas[:,1]) - np.amin(gas[:,1]))
+        zLengthGas = (np.amax(gas[:,2]) - np.amin(gas[:,2]))
     maxLength = np.amax([xLengthStars, yLengthStars, zLengthStars, xLengthGas, yLengthGas, zLengthGas])
     return maxLength
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--ageSmooth") # if True, smooth ages based on number of star particles (makeTextFiles parameter)
+# parser.add_argument("--ageSmooth") # if True, smooth ages based on number of star particles (makeTextFiles parameter)
 parser.add_argument("--SF") # if True, star particles younger than 10 Myrs are assigned MAPPINGS-III SEDs (makeTextFiles parameter)
 parser.add_argument("--tauClear") # clearing time in Myrs for MAPPINGS-III f_PDR calculations (only matters if SF=True) (makeTextFiles $
 parser.add_argument("--numPhotons") # number of photon packages (SKIRT parameter)
 parser.add_argument("--pixels") # number of pixels (square) for image (SKIRT parameter)
 parser.add_argument("--dustFraction") # dust to metal ratio (SKIRT parameter)
 parser.add_argument("--maxTemp") # maximum temperature at which dust can form (SKIRT parameter)
-parser.add_argument("--SSP") # simple stellar population model including IMF after underscore (SKIRT parameter)
+parser.add_argument("--sim") # sim name (ex: cptmarvel, h148, r431, etc.) 
+parser.add_argument("--sim_dict_path") # path to pickle file where simulation info is stored. EX: /resources/marvel_dcjl_sim_dict.pickle
+parser.add_argument("--halo") # halo number
 args = parser.parse_args()
+sim_dict=pickle.load(open(args.sim_dict_path, 'rb'))
 
 storeImages = True
 
 numPixels = int(args.pixels)
-reducedPixels = int(numPixels/4)
+reducedPixels = numPixels#int(numPixels/4)
 
-dustFraction = float(args.dustFraction)
+dustFraction = float(0.1)
 
 origDir = os.getcwd()
-codePath=expanduser('~')+'/nihao2/'
-resultPath = '/scratch/ntf229/nihao2/' # store results here
+codePath='/data/riggs/gradients-SKIRT-Pipeline/'
+resultPath = '/data/riggs/SKIRT/'+sim_dict[args.sim]['class']+'/'+args.sim+'/'+str(args.halo)+'/'  # store results here
+
 selectedPath = resultPath+'selectedOrientations/'
 massPath = resultPath+'GlobalProps/stellarMasses/'
 SFRPath = resultPath+'GlobalProps/SFR/'
@@ -161,22 +171,6 @@ SKIRTPath = resultPath+'bestParamsRT/'
 particlePath = resultPath+'Particles/'
 particlePathNoSF = resultPath+'Particles/' # for SFHs
 
-if eval(args.ageSmooth):
-    SKIRTPath += 'ageSmooth/'
-    particlePath += 'ageSmooth/'
-    particlePathNoSF += 'ageSmooth/'
-    savePath += 'ageSmooth/'
-    SFRPath += 'ageSmooth/'
-    SFHPath += 'ageSmooth/'
-    CEHPath += 'ageSmooth/'
-else:
-    SKIRTPath += 'noAgeSmooth/'
-    particlePath += 'noAgeSmooth/'
-    particlePathNoSF += 'noAgeSmooth/'
-    savePath += 'noAgeSmooth/'
-    SFRPath += 'noAgeSmooth/'
-    SFHPath += 'noAgeSmooth/'
-    CEHPath += 'noAgeSmooth/'
 if eval(args.SF):
     SKIRTPath += 'SF/tauClear'+args.tauClear+'/'
     particlePath += 'SF/tauClear'+args.tauClear+'/'
@@ -187,11 +181,13 @@ else:
     savePath += 'noSF/'
 particlePathNoSF += 'noSF/'
 
-noDustSKIRTPath = SKIRTPath + 'noDust/'
+noDustSKIRTPath = SKIRTPath+'noDust/'
 SKIRTPath += 'dust/dustFraction'+args.dustFraction+'/maxTemp'+args.maxTemp+'/'
+# savePath += 'dust/dustFraction'+args.dustFraction+'/maxTemp'+args.maxTemp+'/'
 
-SKIRTPath += 'numPhotons'+args.numPhotons+'/'+args.SSP+'/'
-noDustSKIRTPath += 'numPhotons'+args.numPhotons+'/'+args.SSP+'/'
+SKIRTPath += 'numPhotons'+args.numPhotons+'/'
+noDustSKIRTPath += 'numPhotons'+args.numPhotons+'/'
+# savePath += 'numPhotons'+args.numPhotons+'/'
 
 os.system('mkdir -p '+savePath)
 if storeImages:
@@ -199,20 +195,15 @@ if storeImages:
 
 band_names = np.asarray(['FUV', 'NUV', 'u', 'g', 'r', 'i', 'z', '2MASS_J', 
               '2MASS_H', '2MASS_KS', 'W1', 'W2', 'W3', 'W4', 'PACS70', 
-              'PACS100', 'PACS160', 'SPIRE250', 'SPIRE350', 'SPIRE500'])
+              'PACS100', 'PACS160', 'SPIRE250', 'SPIRE350', 'SPIRE500',
+              'SPITZER_IRAC_I1', 'SPITZER_IRAC_I2', 'SPITZER_IRAC_I3',
+              'SPITZER_IRAC_I4'])
+# band_names = np.asarray(['SPITZER_IRAC_I1', 'SPITZER_IRAC_I2', 'SPITZER_IRAC_I3',
+              # 'SPITZER_IRAC_I4'])
 
 # make names 2d: [[name1, z1], [name2, z2], ... ]
 # names[:,0] gives all names, names[:,1] gives all redshifts
-names = np.asarray([['g2.83e12', 'z2.0'], 
-        ['g2.91e12', 'z2.0'],
-        ['g3.03e12', 'z2.0'],
-        ['g3.09e12', 'z2.0'],
-        ['g3.25e12', 'z2.0'],
-        ['g3.36e12', 'z2.0'],
-        ['g2.96e12', 'z3.6'],
-        ['g2.71e12', 'z3.6'],
-        ['g3.76e12', 'z3.6'],
-        ['g4.36e12', 'z3.6']])
+names = np.asarray([[args.sim+str(args.halo), 'z0.0']])
 
 numOrientations = 10
 numBins = 200 # number of bins for stored SFH / CEH
@@ -272,7 +263,7 @@ for i in range(len(names[:,0])):
     SFH, ages = getSFH(names[i,:])
     CEH, metals = getCEH(names[i,:])
     dustMass = getDustMass(names[i,:])
-    selections = np.load(selectedPath+names[i,1]+'/'+names[i,0]+'/selectedIncAzAR.npy') # [inc, az, axisRatio]
+    selections = np.load(selectedPath+'/selectedIncAzAR.npy') # [inc, az, axisRatio]
     axisRatios = selections[:,2]
     size = getSize(names[i,:])
     galaxies['name'][i] = names[i,0]
@@ -298,18 +289,21 @@ for i in range(len(names[:,0])):
         image_galaxies['dust_mass'] = dustMass
         image_galaxies['axis_ratios'] = axisRatios
         image_galaxies['size'] = size
-    for j in range(numOrientations): # loop through orientations
-        instName = 'axisRatio' + str(np.round_(axisRatios[j], decimals=4)) # orientation naming system
+    for j in range(numOrientations-1): # loop through orientations
+        instName = 'axisRatio' + str(np.round(axisRatios[j+1], decimals=4)) # orientation naming system
         # Spatially integrated
-        BB = np.loadtxt(SKIRTPath+names[i,1]+'/'+names[i,0]+'/sph_broadband_'+instName+'_sed.dat', unpack = True)[1] # spatially integrated broadband fluxes in Janskys
-        noDustBB = np.loadtxt(noDustSKIRTPath+names[i,1]+'/'+names[i,0]+'/sph_broadband_'+instName+'_sed.dat', unpack = True)[1]  # spatially integrated broadband fluxes in Janskys
-        sed = np.loadtxt(SKIRTPath+names[i,1]+'/'+names[i,0]+'/sph_SED_'+instName+'_sed.dat', unpack = True)
+        # print('SKIRTPath=',SKIRTPath)
+        # print('noDustSKIRTPath=',noDustSKIRTPath)
+        BB = np.loadtxt(SKIRTPath+'sph_broadband_'+instName+'_sed.dat', unpack = True)[1] # spatially integrated broadband fluxes in Janskys
+        
+        noDustBB = np.loadtxt(noDustSKIRTPath+'sph_broadband_'+instName+'_sed.dat', unpack = True)[1]  # spatially integrated broadband fluxes in Janskys
+        sed = np.loadtxt(SKIRTPath+'sph_SED_'+instName+'_sed.dat', unpack = True)
         if (wave is None): # only need to do once
             wave = sed[0] * 1e4 # spatially integrated SED wavelengths converted to Angstroms
             spectrum = np.zeros((len(names) * numOrientations, len(wave)), dtype=np.float32)
             spectrum_nodust = np.zeros((len(names) * numOrientations, len(wave)), dtype=np.float32)
         spec = sed[1] # spatially integrated SED fluxes in Janskys
-        noDustSed = np.loadtxt(noDustSKIRTPath+names[i,1]+'/'+names[i,0]+'/sph_SED_'+instName+'_sed.dat', unpack = True)
+        noDustSed = np.loadtxt(noDustSKIRTPath+'sph_SED_'+instName+'_sed.dat', unpack = True)
         noDustSpec = noDustSed[1]
         Av = getAv(names[i], instName)
         attenuationWave, attenuationMags = attenuationCurves()
@@ -335,12 +329,12 @@ for i in range(len(names[:,0])):
         attenuation_mags[indx, :] = attenuationMags
         # Spatially resolved
         if storeImages:
-            imageFile = fits.open(SKIRTPath+names[i,1]+'/'+names[i,0]+'/sph_broadband_'+instName+'_total.fits')
+            imageFile = fits.open(SKIRTPath+'sph_broadband_'+instName+'_total.fits')
             imageBB = np.asarray(imageFile[0].data) # (20, 2000, 2000) bands in MJy/st
-            imageBB = reduceImageSize(imageBB) # (20, 500, 500)
-            noDustImageFile = fits.open(noDustSKIRTPath+names[i,1]+'/'+names[i,0]+'/sph_broadband_'+instName+'_total.fits')
+            # imageBB = reduceImageSize(imageBB) # (20, 500, 500)
+            noDustImageFile = fits.open(noDustSKIRTPath+'sph_broadband_'+instName+'_total.fits')
             noDustImageBB = np.asarray(noDustImageFile[0].data) # (20, 2000, 2000) bands in MJy/st
-            noDustImageBB = reduceImageSize(noDustImageBB) # (20, 500, 500)
+            # noDustImageBB = reduceImageSize(noDustImageBB) # (20, 500, 500)
             # Store resolved data
             image_summary['name'][j] = galaxies['name'][i]
             image_summary['redshift'][j] = galaxies['redshift'][i]
@@ -356,20 +350,16 @@ for i in range(len(names[:,0])):
         # Increase indx
         indx += 1
         if storeImages:
-            os.system('mkdir -p '+savePath+'resolved/'+names[i,1]+'/')
-            fitsio.write(savePath+'resolved/'+names[i,1]+'/'+names[i,0]+'_nihao-resolved-photometry.fits', image_galaxies, extname='GALAXIES', clobber=True)
-            fitsio.write(savePath+'resolved/'+names[i,1]+'/'+names[i,0]+'_nihao-resolved-photometry.fits', image_summary, extname='SUMMARY', clobber=False)
+            os.system('mkdir -p '+savePath+'resolved/')
+            fitsio.write(savePath+'resolved/'+'_resolved-photometry.fits', image_galaxies, extname='GALAXIES', clobber=True)
+            fitsio.write(savePath+'resolved/'+'_resolved-photometry.fits', image_summary, extname='SUMMARY', clobber=False)
 
-fitsio.write(savePath+'nihao-integrated-seds.fits', galaxies, extname='GALAXIES', clobber=True)
-fitsio.write(savePath+'nihao-integrated-seds.fits', summary, extname='SUMMARY', clobber=False)
-fitsio.write(savePath+'nihao-integrated-seds.fits', wave, extname='WAVE', clobber=False)
-fitsio.write(savePath+'nihao-integrated-seds.fits', spectrum, extname='SPEC', clobber=False)
-fitsio.write(savePath+'nihao-integrated-seds.fits', spectrum_nodust, extname='SPECNODUST', clobber=False)
-fitsio.write(savePath+'nihao-integrated-seds.fits', attenuationWave, extname='ATTENUATION_WAVE', clobber=False)
-fitsio.write(savePath+'nihao-integrated-seds.fits', attenuation_mags, extname='ATTENUATION_MAGS', clobber=False)
-
-#if storeImages:
-#    fitsio.write(savePath+'nihao-resolved-photometry.fits', galaxies, extname='GALAXIES', clobber=True)
-#    fitsio.write(savePath+'nihao-resolved-photometry.fits', image_summary, extname='SUMMARY', clobber=False)
+fitsio.write(savePath+'integrated-seds.fits', galaxies, extname='GALAXIES', clobber=True)
+fitsio.write(savePath+'integrated-seds.fits', summary, extname='SUMMARY', clobber=False)
+fitsio.write(savePath+'integrated-seds.fits', wave, extname='WAVE', clobber=False)
+fitsio.write(savePath+'integrated-seds.fits', spectrum, extname='SPEC', clobber=False)
+fitsio.write(savePath+'integrated-seds.fits', spectrum_nodust, extname='SPECNODUST', clobber=False)
+fitsio.write(savePath+'integrated-seds.fits', attenuationWave, extname='ATTENUATION_WAVE', clobber=False)
+fitsio.write(savePath+'integrated-seds.fits', attenuation_mags, extname='ATTENUATION_MAGS', clobber=False)
 
 print('done')

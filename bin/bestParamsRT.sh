@@ -8,7 +8,7 @@ h229_halos=(2 3 6 14 18 22 49 92)
 h242_halos=(8 10 21 30 34 38)
 h329_halos=(7 29 115 117)
 
-mdcjl_path="/data/riggs/gradients/marvel_dcjl_sim_dict.pickle"
+mdcjl_path="/data/riggs/gradients-SKIRT-Pipeline/resources/marvel_dcjl_sim_dict.pickle"
 
 declare -A mdcjl_dict
 
@@ -25,6 +25,6 @@ for i in "${!mdcjl_dict[@]}"; do
     echo "on sim: $i"
     for j in "${!mdcjl_dict[$i]}"; do
         echo "on halo: $j"
-        python bestParamsRT.py --SF=False --sim=$i --sim_dict_path=$mdcjl_path --halo=$j --distance=1.5 --numPhotons=1e7 --pixels=256 --dustFraction=0.1 --maxTemp=8000 --FoV=2235
+        python bestParamsRT.py --SF=True --tauClear=3 --sim=$i --sim_dict_path=$mdcjl_path --halo=$j --distance=50 --numPhotons=1e8 --pixels=256 --dustFraction=0.1 --maxTemp=8000 --FoV=74240
     done
 done
