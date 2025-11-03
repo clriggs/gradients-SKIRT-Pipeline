@@ -1,6 +1,6 @@
 # gradients-SKIRT-Pipeline
 
-This is my fork of the NIHAO-SKIRT-Pipeline repository created by Nicholas Faucher (ntf229). 
+This is my fork of the [NIHAO-SKIRT-Pipeline](https://github.com/ntf229/NIHAO-SKIRT-Pipeline) repository created by Nicholas Faucher (ntf229). 
 
 The original readme for the NIHAO-SKIRT-Pipeline is below:
 
@@ -21,3 +21,4 @@ Starting from simulation outputs, code in the bin directory should be run in the
 6. storeBestAsFits.py - store mock photometry as Fits file
 7. resolvedImagesFromFits.py - make images from Fits file with custom color scaling
 
+**Note: you can batch run each script using the .sh scripts of the same name.**
