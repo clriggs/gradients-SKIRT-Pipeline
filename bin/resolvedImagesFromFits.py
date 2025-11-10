@@ -110,7 +110,10 @@ def makeImages(galaxy, z):
             image = image_i1
             image = np.transpose(image) #rotates the image!
         ax.imshow(image, interpolation='none')
-        plt.savefig(plotPath+'Images/'+args.instrument+'/z'+str(z)+'/'+galaxy+'/axisRatio'+str(axisRatios[i])+'.png', dpi=sizes[0])
+        if args.instrument == 'composite':
+            plt.savefig(plotPath+'Images/'+args.instrument+'/z'+str(z)+'/'+galaxy+'/axisRatio'+str(axisRatios[i])+'_COMPOSITE.png', dpi=sizes[0])
+        elif args.instrument == 'spitzer':
+            plt.savefig(plotPath+'Images/'+args.instrument+'/z'+str(z)+'/'+galaxy+'/axisRatio'+str(axisRatios[i])+'_SPITZER_I1.png', dpi=sizes[0])
         plt.close()
 
 parser = argparse.ArgumentParser()

@@ -8,15 +8,15 @@ import pickle
 
 def getStellarMass(galaxy):
     if os.path.isfile(massPath+'/stellarMass.npy'):
-        SKIRT_stellarMass = float(np.load(massPath+'/stellarMass.npy'))
+        SKIRT_stellarMass = float(np.load(massPath+'stellarMass.npy'))
     else:
         #stars = np.load(particlePath+'/stars.npy')
         #youngStars = np.load(particlePath+'/youngStars.npy')
         #SKIRT_stellarMass = np.sum(stars[:,7]) + (np.sum(youngStars[:,7] * 1.e7)) # in Msun
-        stars = np.load(particlePathNoSF+'/stars.npy')
+        stars = np.load(particlePathNoSF+'stars.npy')
         SKIRT_stellarMass = np.sum(stars[:,7]) # in Msun
-        os.system('mkdir -p '+massPath+'/')
-        np.save(massPath+'/stellarMass.npy', SKIRT_stellarMass)
+        os.system('mkdir -p '+massPath)
+        np.save(massPath+'stellarMass.npy', SKIRT_stellarMass)
     return SKIRT_stellarMass
 
 def getSFR(galaxy):
@@ -27,7 +27,7 @@ def getSFR(galaxy):
         #youngStars = np.load(particlePath+'/youngStars.npy')
         #youngMask = stars[:,9] < 1.e8 # younger than 100 Myrs
         #SKIRT_SFR = (np.sum(stars[youngMask,7]) / 1.e8) + np.sum(youngStars[:,7]) # in Msun per year
-        stars = np.load(particlePathNoSF+'/stars.npy')
+        stars = np.load(particlePathNoSF+'stars.npy')
         youngMask = stars[:,9] < 1.e8 # younger than 100 Myrs
         SKIRT_SFR = (np.sum(stars[youngMask,7]) / 1.e8) # in Msun per year
         os.system('mkdir -p '+SFRPath+'/')
@@ -37,7 +37,7 @@ def getSFR(galaxy):
 def getSFH(galaxy):
     # star formation history (1D histogram)
     # ages on log scale in years
-    stars = np.load(particlePathNoSF+'/stars.npy')
+    stars = np.load(particlePathNoSF+'stars.npy')
     ages = stars[:,9] # in years 
     masses = stars[:,7] # in M_sun
     binGrid = np.logspace(np.log10(np.amin(ages)), np.log10(np.amax(ages)), num=numBins+1)
@@ -49,7 +49,7 @@ def getSFH(galaxy):
 def getCEH(galaxy):
     # chemical evolution history (2D histogram)
     # ages and metallicities on log scale
-    stars = np.load(particlePathNoSF+'/stars.npy')
+    stars = np.load(particlePathNoSF+'stars.npy')
     ages = stars[:,9] # in years 
     masses = stars[:,7] # in M_sun
     metals = np.float64(stars[:,8])
@@ -67,15 +67,15 @@ def getCEH(galaxy):
     return CEH, metals
 
 def getDustMass(galaxy):
-    if os.path.isfile(massPath+'/metalMass.npy'):
-        metalMass = float(np.load(massPath+'/metalMass.npy'))
+    if os.path.isfile(massPath+'metalMass.npy'):
+        metalMass = float(np.load(massPath+'metalMass.npy'))
     else:
-        gas = np.load(particlePath+'/gas.npy')
+        gas = np.load(particlePath+'gas.npy')
         tempMask = gas[:,6] < float(16000.)
         ghostMask = np.asarray(gas[tempMask][:,4] > 0, dtype=bool) # mask out negative mass ghost particles
         metalMass = np.sum(gas[tempMask, 4][ghostMask] * gas[tempMask, 5][ghostMask]) # in Msun
-        os.system('mkdir -p '+massPath+'/')
-        np.save(massPath+'/metalMass.npy', metalMass)
+        os.system('mkdir -p '+massPath)
+        np.save(massPath+'metalMass.npy', metalMass)
     SKIRT_dustMass = metalMass * dustFraction
     return SKIRT_dustMass
 
@@ -118,8 +118,8 @@ def energyBalance():
 
 def getSize(galaxy):
     # calculate size of galaxy image from text files
-    stars = np.load(particlePath+'/stars.npy')
-    gas = np.load(particlePath+'/gas.npy')
+    stars = np.load(particlePath+'stars.npy')
+    gas = np.load(particlePath+'gas.npy')
     xLengthStars = (np.amax(stars[:,0]) - np.amin(stars[:,0]))
     yLengthStars = (np.amax(stars[:,1]) - np.amin(stars[:,1]))
     zLengthStars = (np.amax(stars[:,2]) - np.amin(stars[:,2]))
@@ -175,10 +175,12 @@ if eval(args.SF):
     SKIRTPath += 'SF/tauClear'+args.tauClear+'/'
     particlePath += 'SF/tauClear'+args.tauClear+'/'
     savePath += 'SF/'
+    selectedPath += 'SF/tauClear'+args.tauClear+'/'
 else:
     SKIRTPath += 'noSF/'
     particlePath += 'noSF/'
     savePath += 'noSF/'
+    
 particlePathNoSF += 'noSF/'
 
 noDustSKIRTPath = SKIRTPath+'noDust/'
@@ -263,7 +265,7 @@ for i in range(len(names[:,0])):
     SFH, ages = getSFH(names[i,:])
     CEH, metals = getCEH(names[i,:])
     dustMass = getDustMass(names[i,:])
-    selections = np.load(selectedPath+'/selectedIncAzAR.npy') # [inc, az, axisRatio]
+    selections = np.load(selectedPath+'selectedIncAzAR.npy') # [inc, az, axisRatio]
     axisRatios = selections[:,2]
     size = getSize(names[i,:])
     galaxies['name'][i] = names[i,0]

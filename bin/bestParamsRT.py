@@ -48,10 +48,12 @@ if eval(args.SF):
     particlePath += 'SF/tauClear'+args.tauClear+'/'
     SKIRTPath += 'SF/tauClear'+args.tauClear+'/'
     noDustSKIRTPath += 'SF/tauClear'+args.tauClear+'/'
+    selectedPath += 'SF/tauClear'+args.tauClear+'/'
 else:
     particlePath += 'noSF/'
     SKIRTPath += 'noSF/'
     noDustSKIRTPath += 'noSF/'
+    selectedPath += 'noSF/'
     
 SKIRTPath += 'dust/dustFraction'+args.dustFraction+'/maxTemp'+args.maxTemp+'/'
 noDustSKIRTPath += 'noDust/'
