@@ -169,7 +169,13 @@ savePath = resultPath+'bestParamsFits/'
 # Directory structure stores important parameters
 SKIRTPath = resultPath+'bestParamsRT/'
 particlePath = resultPath+'Particles/'
-particlePathNoSF = resultPath+'Particles/' # for SFHs
+if sim_dict[args.sim]['class'] == "marvel" or sim_dict[args.sim]['class'] == "dcjl":
+    particlePathNoSF = resultPath+'Particles/noAgeSmooth/' # for SFHs
+elif sim_dict[args.sim]['class'] == "romulus":
+    particlePathNoSF = resultPath+'Particles/'
+else:
+    print('SIM CLASS UNDEFINED. ERROR')
+    exit()
 
 if eval(args.SF):
     SKIRTPath += 'SF/tauClear'+args.tauClear+'/'

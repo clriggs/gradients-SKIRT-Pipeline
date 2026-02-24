@@ -27,7 +27,6 @@ r618_halos=(1)
 r634_halos=(1)
 r642_halos=(1)
 r656_halos=(1)
-r707_halos=(1)
 r716_halos=(1)
 r718_halos=(1)
 r719_halos=(1)
@@ -76,7 +75,6 @@ rom_dict[r618]=r618_halos[@]
 rom_dict[r634]=r634_halos[@]
 rom_dict[r642]=r642_halos[@]
 rom_dict[r656]=r656_halos[@]
-rom_dict[r707]=r707_halos[@]
 rom_dict[r716]=r716_halos[@]
 rom_dict[r718]=r718_halos[@]
 rom_dict[r719]=r719_halos[@]
@@ -98,7 +96,7 @@ for i in "${!rom_dict[@]}"; do
     echo "on sim: $i"
     for j in "${!rom_dict[$i]}"; do
         echo "on halo: $j"
-        python resolvedImagesFromFits.py --SF=True --tauClear=3 --numPhotons=1e8 --pixels=256 --dustFraction=0.1 --maxTemp=8000 --sim=$i --sim_dict_path=$rom_path --halo=$j --instrument=composite
+        python resolvedImagesFromFits.py --SF=True --tauClear=2.5 --numPhotons=1e8 --pixels=256 --dustFraction=0.1 --maxTemp=16000 --sim=$i --sim_dict_path=$rom_path --halo=$j --instrument=composite
     done
 done
 echo "done with loop..."

@@ -148,7 +148,7 @@ else:
 
 
 # # Best parameters
-tauClear = int(args.tauClear)
+tauClear = float(args.tauClear)
 dustFraction = args.dustFraction
 
 SKIRTPath, plotPath, noDustSKIRTPath, noDustPlotPath, particlePath = directoryStructure(dustFraction)

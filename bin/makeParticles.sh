@@ -1,9 +1,9 @@
 #!/bin/bash
-cptmarvel_halos=(1 2 3 5 6 7 10 11 13)
-elektra_halos=(1 2 3 4 5 9 10 11 12 17 36)
-storm_halos=(1 2 3 4 5 6 7 8 10 11 12 14 15 23 31 44)
-rogue_halos=(1 3 7 8 10 11 12 15 16 17 28 31 37)
-h148_halos=(2 3 4 6 7 11 12 13 15 20 23 27 28 33 34 38 65 86 114)
+cptmarvel_halos=(1 2 3 5 6 7 10 13)
+elektra_halos=(1 2 3 4 5 10)
+storm_halos=(1 2 3 4 5 6 7 8 12 14 23 31)
+rogue_halos=(1 3 7 8 10 11 12 28 31 37)
+h148_halos=(2 3 4 6 7 11 12 13 15 20 23 27 28 33 34 38 65 114)
 h229_halos=(2 3 6 14 18 22 49 92)
 h242_halos=(8 10 21 30 34 38)
 h329_halos=(7 29 115 117)
@@ -25,6 +25,6 @@ for i in "${!mdcjl_dict[@]}"; do
     echo "on sim: $i"
     for j in "${!mdcjl_dict[$i]}"; do
         echo "on halo: $j"
-        python makeParticles.py --sim=$i --sim_dict_path=$mdcjl_path --halo=$j --SF=True --tauClear=3
+        python makeParticles.py --sim=$i --sim_dict_path=$mdcjl_path --halo=$j --SF=True --tauClear=2.5
     done
 done

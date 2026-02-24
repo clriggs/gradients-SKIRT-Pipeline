@@ -69,9 +69,16 @@ gas = np.load(particlePath+'gas.npy')
 xLengthStars = (np.amax(stars[:,0]) - np.amin(stars[:,0]))
 yLengthStars = (np.amax(stars[:,1]) - np.amin(stars[:,1]))
 zLengthStars = (np.amax(stars[:,2]) - np.amin(stars[:,2]))
-xLengthGas = (np.amax(gas[:,0]) - np.amin(gas[:,0]))
-yLengthGas = (np.amax(gas[:,1]) - np.amin(gas[:,1]))
-zLengthGas = (np.amax(gas[:,2]) - np.amin(gas[:,2]))
+if len(gas) != 0:
+    xLengthGas = (np.amax(gas[:,0]) - np.amin(gas[:,0]))
+    yLengthGas = (np.amax(gas[:,1]) - np.amin(gas[:,1]))
+    zLengthGas = (np.amax(gas[:,2]) - np.amin(gas[:,2]))
+    
+else:
+    xLengthGas = 0
+    yLengthGas = 0
+    zLengthGas = 0
+
 maxLength = np.amax([xLengthStars, yLengthStars, zLengthStars, xLengthGas, yLengthGas, zLengthGas])
 
 print("xlength stars: ",str(xLengthStars))
